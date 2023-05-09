@@ -36,6 +36,7 @@ reverse() {
     rev_fin $fpath
 }
 
+[[ $(pip list | grep r2pipe > /dev/null)$? -eq 1 ]] && echo "No module named 'r2pipe'" && exit 1
 
 [[ $1 == '' ]] && usage && exit 0
 mkdir -p $FCG_DIR
