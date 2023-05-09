@@ -44,7 +44,17 @@ class FCGParser:
         blocks = []
         for func in functions:
             func_name = func['name']
-            asm = [[ops['offset'], ops['disasm']] for ops in func['ops']]
+
+            # Radare2 will sometimes mark some space as 'Invalid' in `ops`
+            # object and 'disasm' and 'opcode' will not exist, for example
+            #
+            #   {'offset': 13578, 'size': 1, 'bytes': '', 'type': 'invalid'}
+            #   {'offset': 13579, 'size': 1, 'bytes': '', 'type': 'invalid'}
+            # 
+            # so check whether 'disasm' exist
+            asm = [[ops['offset'], ops['disasm']] for ops in func['ops'] if 'disasm' in ops.keys()]
+            if asm == []:
+                continue
             blocks.append({'bName': func_name, 'x': asm})
         
         os.remove(asmpath)
